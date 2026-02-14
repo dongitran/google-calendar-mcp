@@ -68,9 +68,9 @@ export class GoogleCalendarMcpServer {
       process.stderr.write(`Valid tokens found for account(s): ${accountList}\n`);
       return;
     }
-    
+
     const accountMode = this.tokenManager.getAccountMode();
-    
+
     if (this.config.transport.type === 'stdio') {
       // For stdio mode, check for existing tokens
       const hasValidTokens = await this.tokenManager.validateTokens(accountMode);
@@ -157,18 +157,12 @@ export class GoogleCalendarMcpServer {
       }
     }
 
-    // For stdio mode, authentication should have been handled at startup
-    if (this.config.transport.type === 'stdio') {
-      throw new McpError(
-        ErrorCode.InvalidRequest,
-        "Authentication tokens are no longer valid. Please restart the server to re-authenticate."
-      );
-    }
-
-    // For HTTP mode, try to start auth server if not already running
+    // Try to start auth server and open browser for authentication
+    // This works for both stdio and HTTP mode
     try {
-      const authSuccess = await this.authServer.start(false); // openBrowser = false for HTTP mode
-      
+      const openBrowser = this.config.transport.type === 'stdio'; // Open browser for stdio (Antigravity/Claude), not for HTTP mode
+      const authSuccess = await this.authServer.start(openBrowser);
+
       if (!authSuccess) {
         throw new McpError(
           ErrorCode.InvalidRequest,
@@ -199,7 +193,7 @@ export class GoogleCalendarMcpServer {
         const stdioHandler = new StdioTransportHandler(this.server);
         await stdioHandler.connect();
         break;
-        
+
       case 'http':
         const httpConfig: HttpTransportConfig = {
           port: this.config.transport.port,
@@ -212,7 +206,7 @@ export class GoogleCalendarMcpServer {
         );
         await httpHandler.connect();
         break;
-        
+
       default:
         throw new Error(`Unsupported transport type: ${this.config.transport.type}`);
     }
@@ -224,10 +218,10 @@ export class GoogleCalendarMcpServer {
         if (this.authServer) {
           await this.authServer.stop();
         }
-        
+
         // McpServer handles transport cleanup automatically
         this.server.close();
-        
+
         process.exit(0);
       } catch (error: unknown) {
         process.stderr.write(`Error during cleanup: ${error instanceof Error ? error.message : error}\n`);
