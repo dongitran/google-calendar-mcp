@@ -44,7 +44,7 @@ export function getKeysFilePath(): string {
   if (envCredentialsPath) {
     return path.resolve(envCredentialsPath);
   }
-  
+
   // Priority 2: Default file path
   const projectRoot = getProjectRoot();
   const keysPath = path.join(projectRoot, "gcp-oauth.keys.json");
@@ -77,19 +77,29 @@ export interface OAuthCredentialsWithProject {
   redirect_uris?: string[];
 }
 
-// Get project ID from OAuth credentials file
-// Returns undefined if credentials file doesn't exist, is invalid, or missing project_id
+// Get project ID from OAuth credentials
+// Returns undefined if credentials don't exist, are invalid, or missing project_id
 export function getCredentialsProjectId(): string | undefined {
   try {
-    // Use existing helper to get credentials file path
-    const credentialsPath = getKeysFilePath();
+    let credentials: OAuthCredentialsWithProject;
 
-    if (!fs.existsSync(credentialsPath)) {
-      return undefined;
+    // Priority 1: JSON string from environment variable
+    if (process.env.GOOGLE_OAUTH_CREDENTIALS_JSON) {
+      try {
+        credentials = JSON.parse(process.env.GOOGLE_OAUTH_CREDENTIALS_JSON);
+      } catch (error) {
+        // Invalid JSON, return undefined
+        return undefined;
+      }
+    } else {
+      // Priority 2: File path
+      const credentialsPath = getKeysFilePath();
+      if (!fs.existsSync(credentialsPath)) {
+        return undefined;
+      }
+      const credentialsContent = fs.readFileSync(credentialsPath, 'utf-8');
+      credentials = JSON.parse(credentialsContent);
     }
-
-    const credentialsContent = fs.readFileSync(credentialsPath, 'utf-8');
-    const credentials: OAuthCredentialsWithProject = JSON.parse(credentialsContent);
 
     // Extract project_id from installed format or direct format
     if (credentials.installed?.project_id) {
@@ -108,13 +118,17 @@ export function getCredentialsProjectId(): string | undefined {
 // Generate helpful error message for missing credentials
 export function generateCredentialsErrorMessage(): string {
   return `
-OAuth credentials not found. Please provide credentials using one of these methods:
+OAuth credentials not found. Please provide credentials using one of these methods (in priority order):
 
-1. Environment variable:
+1. JSON string (recommended for containers/CI):
+   Set GOOGLE_OAUTH_CREDENTIALS_JSON with the full JSON content:
+   export GOOGLE_OAUTH_CREDENTIALS_JSON='{"installed":{"client_id":"...","client_secret":"...","redirect_uris":["http://localhost:3000/oauth2callback"]}}'
+
+2. File path via environment variable:
    Set GOOGLE_OAUTH_CREDENTIALS to the path of your credentials file:
    export GOOGLE_OAUTH_CREDENTIALS="/path/to/gcp-oauth.keys.json"
 
-2. Default file path:
+3. Default file path:
    Place your gcp-oauth.keys.json file in the package root directory.
 
 Token storage:

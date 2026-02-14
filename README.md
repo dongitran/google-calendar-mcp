@@ -101,6 +101,20 @@ export GOOGLE_OAUTH_CREDENTIALS="/path/to/your/gcp-oauth.keys.json"
 npx @cocal/google-calendar-mcp auth
 ```
 
+**Alternative: Using JSON string (recommended for containers/CI):**
+```bash
+export GOOGLE_OAUTH_CREDENTIALS_JSON='{"installed":{"client_id":"YOUR_CLIENT_ID","client_secret":"YOUR_CLIENT_SECRET","redirect_uris":["http://localhost:3000/oauth2callback"],"project_id":"YOUR_PROJECT_ID"}}'
+npx @dongtran/google-calendar-mcp auth
+```
+
+> [!TIP]
+> Use `GOOGLE_OAUTH_CREDENTIALS_JSON` in containerized environments (Docker, Kubernetes) or CI/CD pipelines to avoid mounting credential files as volumes. The JSON string takes highest priority over file paths.
+
+**Docker example:**
+```dockerfile
+ENV GOOGLE_OAUTH_CREDENTIALS_JSON='{"installed":{"client_id":"...","client_secret":"...","redirect_uris":["http://localhost:3000/oauth2callback"]}}'
+```
+
 **For local installation:**
 ```bash
 npm run auth
@@ -230,7 +244,7 @@ npx @cocal/google-calendar-mcp start --enable-tools list-events,create-event,get
   "mcpServers": {
     "google-calendar": {
       "command": "npx",
-      "args": ["@cocal/google-calendar-mcp"],
+      "args": ["@dongtran/google-calendar-mcp"],
       "env": {
         "GOOGLE_OAUTH_CREDENTIALS": "/path/to/credentials.json",
         "ENABLED_TOOLS": "list-events,create-event,get-current-time,update-event"
@@ -239,6 +253,9 @@ npx @cocal/google-calendar-mcp start --enable-tools list-events,create-event,get
   }
 }
 ```
+
+> [!NOTE]
+> You can also use `GOOGLE_OAUTH_CREDENTIALS_JSON` instead of `GOOGLE_OAUTH_CREDENTIALS` to pass credentials as a JSON string. This is particularly useful for containerized deployments.
 
 **Available tool names:** `list-calendars`, `list-events`, `search-events`, `get-event`, `list-colors`, `create-event`, `update-event`, `delete-event`, `get-freebusy`, `get-current-time`, `respond-to-event`, `manage-accounts`
 

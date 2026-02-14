@@ -20,11 +20,11 @@ async function main() {
   try {
     // Parse command line arguments
     const config = parseArgs(process.argv.slice(2));
-    
+
     // Create and initialize the server
     const server = new GoogleCalendarMcpServer(config);
     await server.initialize();
-    
+
     // Start the server with the appropriate transport
     await server.start();
 
@@ -116,9 +116,10 @@ Examples:
   npx @cocal/google-calendar-mcp
 
 Environment Variables:
-  GOOGLE_OAUTH_CREDENTIALS    Path to OAuth credentials file
-  GOOGLE_ACCOUNT_MODE         Account ID to use (alternative to auth argument)
-  ENABLED_TOOLS               Comma-separated list of tools to enable
+  GOOGLE_OAUTH_CREDENTIALS_JSON   OAuth credentials as JSON string (highest priority)
+  GOOGLE_OAUTH_CREDENTIALS        Path to OAuth credentials file
+  GOOGLE_ACCOUNT_MODE             Account ID to use (alternative to auth argument)
+  ENABLED_TOOLS                   Comma-separated list of tools to enable
 `);
 }
 
