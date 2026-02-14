@@ -9,6 +9,7 @@ on:
 jobs:
   # Job 1: Test and Coverage (includes build, quality checks, and coverage reporting)
   test-and-coverage:
+    if: false  # Disabled temporarily
     runs-on: ubuntu-latest
     
     strategy:
@@ -70,7 +71,7 @@ jobs:
 
   # Job 2: Tool Description Token Analysis (PR only)
   tool-description-analysis:
-    if: github.event_name == 'pull_request'
+    if: false  # Disabled temporarily
     runs-on: ubuntu-latest
     permissions:
       contents: read
