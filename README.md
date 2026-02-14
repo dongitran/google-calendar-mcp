@@ -42,25 +42,30 @@ A Model Context Protocol (MCP) server that provides Google Calendar integration 
 
 **Option 1: Use with npx (Recommended)**
 
-Add to your Claude Desktop configuration:
+Add to your MCP client configuration:
 
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Claude Desktop (macOS)**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Claude Desktop (Windows)**: `%APPDATA%\Claude\claude_desktop_config.json`  
+**Antigravity**: `~/.gemini/antigravity/mcp_config.json`
+
 ```json
 {
   "mcpServers": {
     "google-calendar": {
       "command": "npx",
-      "args": ["@cocal/google-calendar-mcp"],
+      "args": ["@dongtran/google-calendar-mcp"],
       "env": {
-        "GOOGLE_OAUTH_CREDENTIALS": "/path/to/your/gcp-oauth.keys.json"
+        "GOOGLE_OAUTH_CREDENTIALS_JSON": "{\"installed\":{\"client_id\":\"YOUR_CLIENT_ID\",\"client_secret\":\"YOUR_CLIENT_SECRET\",\"redirect_uris\":[\"http://localhost\"]}}"
       }
     }
   }
 }
 ```
 
-**⚠️ Important Note for npx Users**: When using npx, you **must** specify the credentials file path using the `GOOGLE_OAUTH_CREDENTIALS` environment variable.
+**Note**: Replace `YOUR_CLIENT_ID` and `YOUR_CLIENT_SECRET` with values from your downloaded OAuth credentials JSON file.
+
+> [!TIP]
+> For complete setup instructions including API enablement and test user configuration, see [SETUP.md](SETUP.md).
 
 **Option 2: Local Installation**
 
