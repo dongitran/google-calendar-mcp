@@ -42,7 +42,8 @@ Complete setup guide for Google Calendar MCP server OAuth authentication.
 
 ### 4. Configure MCP Server
 
-**Option A: Using credentials file**
+Add to your MCP client configuration (e.g., `~/.gemini/antigravity/mcp_config.json` for Antigravity, or `~/Library/Application Support/Claude/claude_desktop_config.json` for Claude Desktop):
+
 ```json
 {
   "mcpServers": {
@@ -50,27 +51,14 @@ Complete setup guide for Google Calendar MCP server OAuth authentication.
       "command": "npx",
       "args": ["@dongtran/google-calendar-mcp"],
       "env": {
-        "GOOGLE_OAUTH_CREDENTIALS": "/path/to/credentials.json"
+        "GOOGLE_OAUTH_CREDENTIALS_JSON": "{\"installed\":{\"client_id\":\"YOUR_CLIENT_ID\",\"client_secret\":\"YOUR_CLIENT_SECRET\",\"redirect_uris\":[\"http://localhost\"]}}"
       }
     }
   }
 }
 ```
 
-**Option B: Using JSON string (recommended for Docker/K8s)**
-```json
-{
-  "mcpServers": {
-    "google-calendar": {
-      "command": "npx",
-      "args": ["@dongtran/google-calendar-mcp"],
-      "env": {
-        "GOOGLE_OAUTH_CREDENTIALS_JSON": "{\"installed\":{\"client_id\":\"...\",\"client_secret\":\"...\"}}"
-      }
-    }
-  }
-}
-```
+**Note:** Replace `YOUR_CLIENT_ID` and `YOUR_CLIENT_SECRET` with values from your downloaded credentials JSON file.
 
 ### 5. First Authentication
 
