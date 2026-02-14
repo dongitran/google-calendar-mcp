@@ -24,13 +24,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nspady/google-calendar-mcp.git"
+    "url": "git+https://github.com/dongitran/google-calendar-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/nspady/google-calendar-mcp/issues"
+    "url": "https://github.com/dongitran/google-calendar-mcp/issues"
   },
-  "homepage": "https://github.com/nspady/google-calendar-mcp#readme",
-  "author": "nspady",
+  "homepage": "https://github.com/dongitran/google-calendar-mcp#readme",
+  "author": "dongitran",
   "license": "MIT",
   "scripts": {
     "start": "node build/index.js",
